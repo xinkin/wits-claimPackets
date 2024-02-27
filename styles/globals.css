@@ -1,16 +1,38 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+:root {
+  --mikado-50: #f7f9ed;
+  --mikado-100: #ecf0d1;
+  --mikado-200: #dce2a6;
+  --mikado-300: #cbd173;
+  --mikado-400: #c1c34c;
+  --mikado-500: #b4b13e;
+  --mikado-600: #9a9034;
+  --mikado-700: #7c6d2c;
+  --mikado-800: #68592b;
+  --mikado-900: #5a4b29;
+  --mikado-950: #302613;
+  --dark: #0f0f0f;
+  --stroke: #282a3a;
+}
+
 html,
 body {
-  padding: 0;
-  margin: 0;
-  font-family: -apple-system, BlinkMacSystemFont, Segoe UI, Roboto, Oxygen,
-    Ubuntu, Cantarell, Fira Sans, Droid Sans, Helvetica Neue, sans-serif;
+  background-color: var(--dark);
+  color: var(--mikado-50);
 }
 
-a {
-  color: inherit;
-  text-decoration: none;
+[data-testid="rk-connect-button"],
+[data-testid="rk-account-button"] {
+  background-color: var(--mikado-100) !important;
+  color: var(--mikado-950) !important;
+  font-size: 14px !important;
 }
-
-* {
-  box-sizing: border-box;
+[data-rk] .ju367vcl {
+  border: var(--mikado-950) !important;
+  color: var(--mikado-950) !important;
+  background-color: var(--mikado-100) !important;
+  font-size: 14px !important;
 }

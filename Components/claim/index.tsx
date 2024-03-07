@@ -47,7 +47,7 @@ const Claim = () => {
   };
   return (
     <div className="flex flex-col gap-4 items-center justify-center min-w-screen-md rounded-xl border  p-4 border-mikado-200 bg-mikado-100/10">
-      <div className="flex flex-wrap items-center justify-center gap-4 w-full">
+      <div className="flex flex-wrap md:flex-nowrap items-center justify-center gap-4 w-full">
         {userPackets?.length > 0 ? (
           userPackets.map((item: UserPacket) => (
             <Card key={item.id} data={item} />

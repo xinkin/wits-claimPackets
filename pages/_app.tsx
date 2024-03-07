@@ -10,7 +10,10 @@ import { skaleNebula, skaleNebulaTestnet } from "wagmi/chains";
 const config = getDefaultConfig({
   appName: "RainbowKit App",
   projectId: "YOUR_PROJECT_ID",
-  chains: [skaleNebulaTestnet, skaleNebula],
+  chains: [
+    skaleNebulaTestnet,
+    //skaleNebula
+  ],
   ssr: true,
 });
 

@@ -7,6 +7,11 @@ interface MintRequest {
   id: number;
   amount: number;
 }
+export interface UserPacket {
+  id: number;
+  amount: number;
+  address: string;
+}
 interface MerkleTreeResponse {
   root: string;
   leavesBuffer: Uint8Array[];
@@ -17,13 +22,13 @@ const mintRequests: MintRequest[] = [
   { id: 1, amount: 100 },
   { id: 2, amount: 200 },
   { id: 2, amount: 100 },
-  { id: 2, amount: 200 },
+  { id: 2, amount: 200 }, //
   { id: 3, amount: 100 },
-  { id: 3, amount: 200 },
+  { id: 3, amount: 200 }, //
   { id: 4, amount: 100 },
-  { id: 4, amount: 200 },
+  { id: 4, amount: 200 }, //
   { id: 2, amount: 100 },
-  { id: 2, amount: 200 },
+  { id: 2, amount: 200 }, //
 ];
 
 // Setup addresses
@@ -55,13 +60,13 @@ function generateLeaf(account: string, mintRequest: MintRequest): Uint8Array {
   );
 }
 
-const buf2hex = (x: Uint8Array): string =>
-  "0x" + Buffer.from(x).toString("hex");
+const buf2hex = (x: any) => "0x" + x.toString("hex");
 
-const useMerkleTree = () => {
+const useMerkleTree = (account: `0x${string}` | undefined) => {
   const [merkelTree, setMerkelTree] = useState<MerkleTreeResponse | undefined>(
     undefined
   );
+  const [userPackets, setUserPackets] = useState<UserPacket[]>([]);
   const generateMerkle = (accounts: string[], mintRequests: MintRequest[]) => {
     const leaves = mintRequests.map((mintRequest, index) =>
       generateLeaf(accounts[index], mintRequest)
@@ -89,11 +94,49 @@ const useMerkleTree = () => {
     return proof;
   };
 
+  const getUserPackets = (account: string) => {
+    const userPackets: any = {};
+
+    // Iterate over mintRequests and accounts simultaneously
+    for (let i = 0; i < mintRequests.length; i++) {
+      const request = mintRequests[i];
+      const address = accounts[i];
+
+      // If the account matches the requested address
+      if (address.toLowerCase() === account.toLowerCase()) {
+        const key = `${request.id}_${address}`;
+
+        // If the key already exists in userPackets, add the amount
+        if (userPackets.hasOwnProperty(key)) {
+          userPackets[key].amount += request.amount;
+        } else {
+          // Otherwise, initialize a new entry in userPackets
+          userPackets[key] = { ...request, address };
+        }
+      }
+    }
+
+    // Convert the object back to an array
+    setUserPackets(Object.values(userPackets));
+  };
+
   useEffect(() => {
     setMerkelTree(generateMerkle(accounts, mintRequests));
   }, []);
 
-  return { merkelTree, generateProof };
+  useEffect(() => {
+    if (account) {
+      getUserPackets(account);
+    }
+  }, [account]);
+
+  return {
+    merkelTree,
+    generateProof,
+    getUserPackets,
+    userPackets,
+    mintRequests,
+  };
 };
 
 export default useMerkleTree;

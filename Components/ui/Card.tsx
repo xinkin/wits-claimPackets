@@ -4,7 +4,7 @@ import { UserPacket } from "../../hooks/useMerkleTree";
 
 const Card = ({ data }: { data: UserPacket }) => {
   return (
-    <div className="w-full w-[250px] bg-dark/30  p-4 rounded-xl space-y-2">
+    <div className="w-full min-w-[250px] bg-dark/30  p-4 rounded-xl space-y-2">
       <div className="relative w-full h-80 rounded-xl overflow-hidden">
         <Image
           src={`/images/pack${data?.id}.png`}

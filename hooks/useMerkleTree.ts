@@ -9,7 +9,7 @@ interface MintRequest {
 }
 export interface UserPacket {
   id: number;
-  amount: number;
+  request: MintRequest;
   address: string;
 }
 interface MerkleTreeResponse {
@@ -82,42 +82,32 @@ const useMerkleTree = (account: `0x${string}` | undefined) => {
     };
   };
 
-  const generateProof = (account: string) => {
-    const index = findIndexByAddress(account);
+  const generateProof = (account: string, mintRequest: MintRequest) => {
     const leaves = mintRequests.map((mintRequest, index) =>
       generateLeaf(accounts[index], mintRequest)
     );
     const tree = new MerkleTree(leaves, KECCAK256, { sortPairs: true });
 
-    const leaf = buf2hex(generateLeaf(account, mintRequests[index]));
+    const leaf = buf2hex(generateLeaf(account, mintRequest));
     const proof = tree.getProof(leaf).map((x) => buf2hex(x.data));
     return proof;
   };
 
   const getUserPackets = (account: string) => {
-    const userPackets: any = {};
+    const userPackets = [];
 
     // Iterate over mintRequests and accounts simultaneously
     for (let i = 0; i < mintRequests.length; i++) {
       const request = mintRequests[i];
       const address = accounts[i];
 
-      // If the account matches the requested address
+      // If the account matches the requested address, add it to userPackets
       if (address.toLowerCase() === account.toLowerCase()) {
-        const key = `${request.id}_${address}`;
-
-        // If the key already exists in userPackets, add the amount
-        if (userPackets.hasOwnProperty(key)) {
-          userPackets[key].amount += request.amount;
-        } else {
-          // Otherwise, initialize a new entry in userPackets
-          userPackets[key] = { ...request, address };
-        }
+        userPackets.push({ id: userPackets.length, request: request, address });
       }
     }
-
-    // Convert the object back to an array
-    setUserPackets(Object.values(userPackets));
+    console.log("userPackets", userPackets);
+    setUserPackets(userPackets);
   };
 
   useEffect(() => {

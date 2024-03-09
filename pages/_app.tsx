@@ -2,32 +2,37 @@ import "@rainbow-me/rainbowkit/styles.css";
 import type { AppProps } from "next/app";
 import "../styles/globals.css";
 
-import { RainbowKitProvider, getDefaultConfig } from "@rainbow-me/rainbowkit";
-import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
-import { WagmiProvider } from "wagmi";
-import { skaleNebula, skaleNebulaTestnet } from "wagmi/chains";
+import { getDefaultWallets, RainbowKitProvider } from "@rainbow-me/rainbowkit";
+import { configureChains, createConfig, sepolia, WagmiConfig } from "wagmi";
+import { skaleNebula } from "wagmi/chains";
+import { publicProvider } from "wagmi/providers/public";
+import { skaleNebulaTestnetCustom } from "../utils/chainTestnet";
 
-const config = getDefaultConfig({
-  appName: "RainbowKit App",
-  projectId: "YOUR_PROJECT_ID",
-  chains: [
-    skaleNebulaTestnet,
-    //skaleNebula
-  ],
-  ssr: true,
+const { chains, publicClient, webSocketPublicClient } = configureChains(
+  [skaleNebulaTestnetCustom, skaleNebula],
+  [publicProvider()]
+);
+
+const { connectors } = getDefaultWallets({
+  appName: "eth-blast",
+  projectId: "19f1c4bd49b1bcedd01449addb543a4f",
+  chains,
 });
 
-const client = new QueryClient();
+const wagmiConfig = createConfig({
+  autoConnect: true,
+  connectors,
+  publicClient,
+  webSocketPublicClient,
+});
 
 function MyApp({ Component, pageProps }: AppProps) {
   return (
-    <WagmiProvider config={config}>
-      <QueryClientProvider client={client}>
-        <RainbowKitProvider>
-          <Component {...pageProps} />
-        </RainbowKitProvider>
-      </QueryClientProvider>
-    </WagmiProvider>
+    <WagmiConfig config={wagmiConfig}>
+      <RainbowKitProvider chains={chains}>
+        <Component {...pageProps} />
+      </RainbowKitProvider>
+    </WagmiConfig>
   );
 }
 

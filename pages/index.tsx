@@ -12,7 +12,7 @@ const Home: NextPage = () => {
         <link href="/images/w_logo.png" rel="icon" />
       </Head>
 
-      <div className="min-h-screen flex items-center justify-center py-6 px-4">
+      <div className="min-h-screen flex items-center justify-center py-8 px-4">
         <Claim />
       </div>
     </MainLayout>

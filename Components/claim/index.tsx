@@ -1,12 +1,12 @@
 "use client";
-import { parseEther } from "ethers";
-import React, { useCallback, useEffect, useState } from "react";
+import React, { useEffect, useState } from "react";
 import toast from "react-hot-toast";
 import { useAccount, useContractWrite, useWaitForTransaction } from "wagmi";
 import useMerkleTree, { UserPacket } from "../../hooks/useMerkleTree";
 import ABI from "../../utils/abi.json";
 import { deployedContratAddress } from "../../utils/constant";
 import Card from "../ui/Card";
+
 const Claim = () => {
   const { address } = useAccount();
   const { generateProof, userPackets, mintRequests } = useMerkleTree(address);

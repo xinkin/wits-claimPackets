@@ -1,7 +1,10 @@
-import ethers from "ethersv5";
+"use client";
+import { ethers } from "ethersv5";
 import KECCAK256 from "keccak256";
 import { MerkleTree } from "merkletreejs";
 import { useEffect, useState } from "react";
+import { useAccount } from "wagmi";
+import { checkIsPacketClaimed } from "../utils/checkIsClaimed";
 
 interface MintRequest {
   id: number;
@@ -9,6 +12,7 @@ interface MintRequest {
 }
 export interface UserPacket {
   id: number;
+  isClaimed: boolean;
   request: MintRequest;
   address: string;
 }
@@ -22,13 +26,13 @@ const mintRequests: MintRequest[] = [
   { id: 1, amount: 100 },
   { id: 2, amount: 200 },
   { id: 2, amount: 100 },
-  { id: 2, amount: 200 }, //
+  { id: 2, amount: 300 }, //
   { id: 3, amount: 100 },
   { id: 3, amount: 200 }, //
   { id: 4, amount: 100 },
   { id: 4, amount: 200 }, //
-  { id: 2, amount: 100 },
-  { id: 2, amount: 200 }, //
+  { id: 2, amount: 600 },
+  { id: 2, amount: 500 }, //
 ];
 
 // Setup addresses
@@ -45,15 +49,9 @@ const accounts: string[] = [
   "0x0DB63C9613b3BECf644A298AfECBa450795f612B",
 ];
 
-const findIndexByAddress = (address: string): number => {
-  return accounts.findIndex(
-    (acc) => acc.toLowerCase() === address.toLowerCase()
-  );
-};
-
 function generateLeaf(account: string, mintRequest: MintRequest): Uint8Array {
   return KECCAK256(
-    ethers?.utils?.defaultAbiCoder.encode(
+    ethers.utils.defaultAbiCoder.encode(
       ["address", "uint256", "uint256"],
       [account, mintRequest.id, mintRequest.amount]
     )
@@ -62,11 +60,22 @@ function generateLeaf(account: string, mintRequest: MintRequest): Uint8Array {
 
 const buf2hex = (x: any) => "0x" + x.toString("hex");
 
-const useMerkleTree = (account: `0x${string}` | undefined) => {
+const useMerkleTree = () => {
+  const { address, isConnected } = useAccount();
   const [merkelTree, setMerkelTree] = useState<MerkleTreeResponse | undefined>(
     undefined
   );
   const [userPackets, setUserPackets] = useState<UserPacket[]>([]);
+  const [fetchingPackets, setfetchingPackets] = useState(false);
+
+  useEffect(() => {
+    setMerkelTree(generateMerkle(accounts, mintRequests));
+  }, []);
+
+  useEffect(() => {
+    getUserPackets(address);
+  }, [address, isConnected]);
+
   const generateMerkle = (accounts: string[], mintRequests: MintRequest[]) => {
     const leaves = mintRequests.map((mintRequest, index) =>
       generateLeaf(accounts[index], mintRequest)
@@ -82,7 +91,12 @@ const useMerkleTree = (account: `0x${string}` | undefined) => {
     };
   };
 
-  const generateProof = (account: string, mintRequest: MintRequest) => {
+  const generateProof = (
+    account: string,
+    mintRequest: MintRequest,
+    accounts: string[],
+    mintRequests: MintRequest[]
+  ) => {
     const leaves = mintRequests.map((mintRequest, index) =>
       generateLeaf(accounts[index], mintRequest)
     );
@@ -90,42 +104,46 @@ const useMerkleTree = (account: `0x${string}` | undefined) => {
 
     const leaf = buf2hex(generateLeaf(account, mintRequest));
     const proof = tree.getProof(leaf).map((x) => buf2hex(x.data));
+
+    // Convert proof to bytes32 format
+    // const bytes32Proof = proof.map((hex) => ethers.utils.hexZeroPad(hex, 32));
     return proof;
   };
 
-  const getUserPackets = (account: string) => {
+  const getUserPackets = async (account: `0x${string}` | undefined) => {
+    setfetchingPackets(true);
     const userPackets = [];
+    if (account) {
+      for (let i = 0; i < mintRequests.length; i++) {
+        const request = mintRequests[i];
+        const address = accounts[i];
 
-    // Iterate over mintRequests and accounts simultaneously
-    for (let i = 0; i < mintRequests.length; i++) {
-      const request = mintRequests[i];
-      const address = accounts[i];
-
-      // If the account matches the requested address, add it to userPackets
-      if (address.toLowerCase() === account.toLowerCase()) {
-        userPackets.push({ id: userPackets.length, request: request, address });
+        // If the account matches the requested address, add it to userPackets
+        if (address.toLowerCase() === account.toLowerCase()) {
+          const isClaimed = await checkIsPacketClaimed(
+            buf2hex(generateLeaf(address, request))
+          );
+          userPackets.push({
+            id: userPackets.length,
+            isClaimed,
+            request: request,
+            address,
+          });
+        }
       }
     }
-    console.log("userPackets", userPackets);
     setUserPackets(userPackets);
+    setfetchingPackets(false);
   };
 
-  useEffect(() => {
-    setMerkelTree(generateMerkle(accounts, mintRequests));
-  }, []);
-
-  useEffect(() => {
-    if (account) {
-      getUserPackets(account);
-    }
-  }, [account]);
-
   return {
+    accounts,
+    mintRequests,
     merkelTree,
     generateProof,
     getUserPackets,
     userPackets,
-    mintRequests,
+    fetchingPackets,
   };
 };
 

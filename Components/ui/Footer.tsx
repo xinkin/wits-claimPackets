@@ -10,7 +10,7 @@ const Footer = () => {
     setShowFullText(!showFullText);
   };
   return (
-    <footer className="bg-mikado-950 border-t border-mikado-100 mt-5">
+    <footer className="bg-mikado-950 border-t border-mikado-100">
       <div className="mx-auto max-w-5xl px-4 py-16 sm:px-6 lg:px-8">
         <div className="flex items-center justify-center text-mikado-300 gap-4">
           <Image

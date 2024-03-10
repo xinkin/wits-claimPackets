@@ -1,99 +1,125 @@
 "use client";
-import React, { useEffect, useState } from "react";
+import { useConnectModal } from "@rainbow-me/rainbowkit";
+import React, { useCallback, useEffect, useState } from "react";
 import toast from "react-hot-toast";
 import { useAccount, useContractWrite, useWaitForTransaction } from "wagmi";
 import useMerkleTree, { UserPacket } from "../../hooks/useMerkleTree";
 import ABI from "../../utils/abi.json";
+import { skaleNebulaTestnetCustom } from "../../utils/chainTestnet";
 import { deployedContratAddress } from "../../utils/constant";
+import Button from "../ui/Button";
 import Card from "../ui/Card";
+import Screen from "./Screen";
 
 const Claim = () => {
   const { address } = useAccount();
-  const { generateProof, userPackets, mintRequests } = useMerkleTree(address);
-  const { data: claimTxHash, write: writeContract } = useContractWrite({
+  const {
+    generateProof,
+    getUserPackets,
+    userPackets,
+    mintRequests,
+    accounts,
+    fetchingPackets,
+  } = useMerkleTree();
+  const { openConnectModal } = useConnectModal();
+  const { data: claimTxHash, writeAsync: writeContract } = useContractWrite({
     abi: ABI,
     address: deployedContratAddress as `0x${string}`,
     functionName: "claimPacket",
   });
-  const { status, isLoading } = useWaitForTransaction({
-    confirmations: 2,
-    hash: claimTxHash?.hash as `0x${string}`,
-  });
-  const [selectedPacket, setselectedPacket] = useState<UserPacket | null>(null);
+
+  const [proofsAndRequests, setProofsAndRequests] = useState<any>(null);
 
   useEffect(() => {
-    switch (status) {
-      case "error":
-        toast.error("something went wrong");
-        break;
-      case "success":
-        toast.success("transaction successful");
-        break;
+    const validProofs: any = [];
+    const validPackets: any = [];
 
-      default:
-        break;
-    }
-  }, [status]);
+    userPackets.forEach((packet) => {
+      if (!packet?.isClaimed) {
+        validProofs.push(
+          generateProof(packet.address, packet.request, accounts, mintRequests)
+        );
+      }
+    });
 
-  const handleClaim = () => {
-    if (address && selectedPacket?.request) {
-      const proof = generateProof(address, selectedPacket?.request);
-      console.log("selectedPacket?.request", selectedPacket?.request);
-      console.log("handle claim", [address, mintRequests, proof]);
-      writeContract({
-        args: [address, mintRequests, proof],
+    userPackets.map((packet) => {
+      if (!packet?.isClaimed) {
+        validPackets.push(packet.request);
+      }
+    });
+
+    console.log({
+      proofs: validProofs,
+      requests: validPackets,
+    });
+
+    setProofsAndRequests({
+      proofs: validProofs,
+      requests: validPackets,
+    });
+  }, [userPackets]);
+
+  const handleClaim = async () => {
+    if (
+      address &&
+      proofsAndRequests?.requests?.length > 0 &&
+      proofsAndRequests?.proofs?.length > 0
+    ) {
+      console.log("handle claim", [
+        address,
+        proofsAndRequests.requests,
+        proofsAndRequests.proofs,
+      ]);
+      await writeContract({
+        args: [address, proofsAndRequests.requests, proofsAndRequests.proofs],
+        value: BigInt(0),
       });
+      toast.success("transaction initiated");
+      setTimeout(() => {
+        getUserPackets(address);
+      }, 3000);
     }
   };
 
   return (
     <div className="flex flex-col gap-4 items-center justify-center min-w-screen-md rounded-xl border  p-4 border-mikado-200 bg-mikado-100/10">
-      <div className="flex flex-wrap max-w-screen-2xl items-center justify-center gap-4 w-full flex-shrink-0 flex-grow">
-        {userPackets.length > 0 ? (
-          userPackets.map((item: UserPacket) => (
-            <Card
-              key={item?.id}
-              data={item}
-              onSelect={(data) => setselectedPacket(data)}
-              isSelected={selectedPacket?.id === item?.id}
+      {address ? (
+        <div className="flex flex-col items-center justify-center gap-4 w-full">
+          {userPackets.length > 0 ? (
+            <>
+              <div className="flex flex-wrap items-center justify-center gap-4 w-full flex-shrink-0 flex-grow">
+                {userPackets.map((item: UserPacket) => (
+                  <Card key={item?.id} data={item} />
+                ))}
+              </div>
+              <Button
+                onClick={handleClaim}
+                disabled={
+                  !address ||
+                  userPackets?.length === 0 ||
+                  proofsAndRequests?.requests?.length === 0 ||
+                  proofsAndRequests?.proofs?.length === 0
+                }
+                text="claim"
+              />
+            </>
+          ) : fetchingPackets ? (
+            <Screen
+              title="Please wait..."
+              desc="Getting your packets ready to be claimed..."
             />
-          ))
-        ) : (
-          <p>Nothing to claim here</p>
-        )}
-      </div>
-      <button
-        onClick={handleClaim}
-        disabled={
-          isLoading || !address || userPackets?.length === 0 || !selectedPacket
-        }
-        className="relative group disabled:cursor-not-allowed disabled:opacity-50"
-      >
-        <div className="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 text-gold group-hover:text-black group-active:text-black font-dragon">
-          CLAIM
+          ) : (
+            <Screen
+              title="Sorry, Ineligible!!"
+              desc="Sorry we can't find any packets for this wallets, please try again with different accounts"
+            />
+          )}
         </div>
-        <picture>
-          <img
-            src="/images/default.png"
-            className="w-full group-hover:hidden group-active:hidden"
-            alt=""
-          />
-        </picture>
-        <picture>
-          <img
-            src="/images/hover.png"
-            className="w-full hidden group-hover:block group-active:hidden"
-            alt=""
-          />
-        </picture>
-        <picture>
-          <img
-            src="/images/active.png"
-            className="w-full hidden group-active:block"
-            alt=""
-          />
-        </picture>
-      </button>
+      ) : (
+        <Screen title="Welcome" desc="Please connect your wallet to continue">
+          <Button onClick={openConnectModal} text="connect" />
+        </Screen>
+      )}
     </div>
   );
 };

@@ -8,7 +8,9 @@ const MainLayout = ({ children }: { children: React.ReactNode }) => {
     <>
       <Header />
 
-      <main>{children}</main>
+      <main className="bg-[url('/images/bg.png')] bg-no-repeat bg-center bg-cover bg-opacity-30">
+        {children}
+      </main>
       <Toaster position="bottom-center" reverseOrder={false} />
       <Footer />
     </>

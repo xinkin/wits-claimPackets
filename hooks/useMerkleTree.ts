@@ -26,13 +26,19 @@ const mintRequests: MintRequest[] = [
   { id: 1, amount: 100 },
   { id: 2, amount: 200 },
   { id: 2, amount: 100 },
-  { id: 2, amount: 300 }, //
+  { id: 2, amount: 300 },
   { id: 3, amount: 100 },
-  { id: 3, amount: 200 }, //
+  { id: 3, amount: 200 },
   { id: 4, amount: 100 },
-  { id: 4, amount: 200 }, //
+  { id: 4, amount: 200 },
   { id: 2, amount: 600 },
-  { id: 2, amount: 500 }, //
+  { id: 2, amount: 500 },
+  { id: 1, amount: 500 },
+  { id: 2, amount: 500 },
+  { id: 3, amount: 100 },
+  { id: 2, amount: 200 },
+  { id: 1, amount: 300 },
+  { id: 4, amount: 400 },
 ];
 
 // Setup addresses
@@ -47,6 +53,12 @@ const accounts: string[] = [
   "0x0DB63C9613b3BECf644A298AfECBa450795f612B",
   "0x3B502B054715A8e0D8F657169615A88B2CCDD429",
   "0x0DB63C9613b3BECf644A298AfECBa450795f612B",
+  "0x2B3937Fe6Ef38CD4be0D9ceb05823087B716d689",
+  "0x2B3937Fe6Ef38CD4be0D9ceb05823087B716d689",
+  "0x5951B59BE60295D90fdC6FEA1c2d4B33F0Ec1Ba1",
+  "0x5951B59BE60295D90fdC6FEA1c2d4B33F0Ec1Ba1",
+  "0x5951B59BE60295D90fdC6FEA1c2d4B33F0Ec1Ba1",
+  "0x5951B59BE60295D90fdC6FEA1c2d4B33F0Ec1Ba1",
 ];
 
 function generateLeaf(account: string, mintRequest: MintRequest): Uint8Array {

@@ -1,2 +1,2 @@
 export const deployedContratAddress =
-  "0x75d28e4c645ac1384999f094b9abcc1dfb4fd57e";
+  "0xD783AbCeb12cdE361269fE7c0e3a695F08Be1830";

@@ -1,18 +1,36 @@
 "use client";
 import { useConnectModal } from "@rainbow-me/rainbowkit";
-import React, { useCallback, useEffect, useState } from "react";
+import React, { useCallback, useEffect, useMemo, useState } from "react";
 import toast from "react-hot-toast";
-import { useAccount, useContractWrite, useWaitForTransaction } from "wagmi";
+import { parseEther } from "viem";
+import {
+  useAccount,
+  useContractWrite,
+  usePublicClient,
+  useWaitForTransaction,
+} from "wagmi";
 import useMerkleTree, { UserPacket } from "../../hooks/useMerkleTree";
 import ABI from "../../utils/abi.json";
 import { skaleNebulaTestnetCustom } from "../../utils/chainTestnet";
 import { deployedContratAddress } from "../../utils/constant";
+import mineGasForTransaction from "../../utils/mineGas";
 import Button from "../ui/Button";
 import Card from "../ui/Card";
 import Screen from "./Screen";
 
 const Claim = () => {
   const { address } = useAccount();
+  const publicClient = usePublicClient({
+    chainId: skaleNebulaTestnetCustom.id,
+  });
+
+  const userNounce = async () => {
+    const nonce = await publicClient.getTransactionCount({
+      address: address!,
+    });
+    return nonce;
+  };
+
   const {
     generateProof,
     getUserPackets,
@@ -65,11 +83,9 @@ const Claim = () => {
       proofsAndRequests?.requests?.length > 0 &&
       proofsAndRequests?.proofs?.length > 0
     ) {
-      console.log("handle claim", [
-        address,
-        proofsAndRequests.requests,
-        proofsAndRequests.proofs,
-      ]);
+      // const nonce = await userNounce();
+      // const mineGas = await mineGasForTransaction(nonce, 300000, address);
+      // console.log(mineGas);
       await writeContract({
         args: [address, proofsAndRequests.requests, proofsAndRequests.proofs],
         value: BigInt(0),

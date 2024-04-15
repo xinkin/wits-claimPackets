@@ -86,14 +86,19 @@ const Claim = () => {
       // const nonce = await userNounce();
       // const mineGas = await mineGasForTransaction(nonce, 300000, address);
       // console.log(mineGas);
-      await writeContract({
-        args: [address, proofsAndRequests.requests, proofsAndRequests.proofs],
-        value: BigInt(0),
-      });
-      toast.success("transaction initiated");
-      setTimeout(() => {
-        getUserPackets(address);
-      }, 3000);
+      try {
+        await writeContract({
+          args: [address, proofsAndRequests.requests, proofsAndRequests.proofs],
+          value: BigInt(0),
+        });
+        toast.success("transaction initiated");
+        setTimeout(() => {
+          getUserPackets(address);
+        }, 3000);
+      } catch (error) {
+        console.log(error);
+        toast.error("transaction failed");
+      }
     }
   };
 

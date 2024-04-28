@@ -11,17 +11,18 @@ import {
 } from "wagmi";
 import useMerkleTree, { UserPacket } from "../../hooks/useMerkleTree";
 import ABI from "../../utils/abi.json";
-import { skaleNebulaTestnetCustom } from "../../utils/chainTestnet";
+
 import { deployedContratAddress } from "../../utils/constant";
 import mineGasForTransaction from "../../utils/mineGas";
 import Button from "../ui/Button";
 import Card from "../ui/Card";
 import Screen from "./Screen";
+import { arbitrumSepolia } from "viem/chains";
 
 const Claim = () => {
   const { address } = useAccount();
   const publicClient = usePublicClient({
-    chainId: skaleNebulaTestnetCustom.id,
+    chainId: arbitrumSepolia.id,
   });
 
   const userNounce = async () => {

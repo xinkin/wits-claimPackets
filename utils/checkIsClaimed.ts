@@ -1,12 +1,12 @@
 import { ethers } from "ethersv5";
-import { skaleNebulaTestnetCustom } from "../utils/chainTestnet";
 import { deployedContratAddress } from "../utils/constant";
 import ABI from "./abi.json";
+import { arbitrumSepolia } from "viem/chains";
 
 export async function checkIsPacketClaimed(leaf: string) {
   // 1. Connect to Ethereum provider
   const provider = new ethers.providers.JsonRpcProvider(
-    skaleNebulaTestnetCustom?.rpcUrls?.default.http[0]
+    arbitrumSepolia?.rpcUrls?.default.http[0]
   );
 
   // 2. Define ABI and contract address

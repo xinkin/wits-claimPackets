@@ -4,9 +4,8 @@ import "../styles/globals.css";
 
 import { getDefaultWallets, RainbowKitProvider } from "@rainbow-me/rainbowkit";
 import { configureChains, createConfig, sepolia, WagmiConfig } from "wagmi";
-import { arbitrumSepolia, skaleNebula } from "wagmi/chains";
+import { arbitrumSepolia } from "wagmi/chains";
 import { publicProvider } from "wagmi/providers/public";
-import { skaleNebulaTestnetCustom } from "../utils/chainTestnet";
 
 const { chains, publicClient, webSocketPublicClient } = configureChains(
   [arbitrumSepolia],

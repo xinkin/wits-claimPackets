@@ -4,12 +4,12 @@ import "../styles/globals.css";
 
 import { getDefaultWallets, RainbowKitProvider } from "@rainbow-me/rainbowkit";
 import { configureChains, createConfig, sepolia, WagmiConfig } from "wagmi";
-import { skaleNebula } from "wagmi/chains";
+import { arbitrumSepolia } from "wagmi/chains";
 import { publicProvider } from "wagmi/providers/public";
-import { skaleNebulaTestnetCustom } from "../utils/chainTestnet";
+import { createWalletClient, http } from "viem";
 
 const { chains, publicClient, webSocketPublicClient } = configureChains(
-  [skaleNebulaTestnetCustom, skaleNebula],
+  [arbitrumSepolia],
   [publicProvider()]
 );
 

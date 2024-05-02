@@ -1,5 +1,5 @@
 import { ethers } from "ethersv5";
-import { deployedContratAddress } from "../utils/constant";
+import { deployedContractAddress } from "../utils/constant";
 import ABI from "./abi.json";
 import { arbitrumSepolia } from "viem/chains";
 
@@ -11,7 +11,7 @@ export async function checkIsPacketClaimed(leaf: string) {
 
   // 2. Define ABI and contract address
   const abi = ABI;
-  const contractAddress = deployedContratAddress;
+  const contractAddress = deployedContractAddress;
 
   // 3. Get an instance of your smart contract
   const contract = new ethers.Contract(contractAddress, abi, provider);

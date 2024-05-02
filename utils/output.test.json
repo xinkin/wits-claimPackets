@@ -2670,51 +2670,51 @@
     },
     {
       "id": 1,
-      "amount": 100
+      "amount": 10
     },
     {
       "id": 2,
-      "amount": 200
+      "amount": 20
     },
     {
       "id": 2,
-      "amount": 100
+      "amount": 10
     },
     {
       "id": 2,
-      "amount": 300
+      "amount": 30
     },
     {
       "id": 3,
-      "amount": 100
+      "amount": 10
     },
     {
       "id": 3,
-      "amount": 200
+      "amount": 20
     },
     {
       "id": 4,
-      "amount": 100
+      "amount": 10
     },
     {
       "id": 4,
-      "amount": 200
+      "amount": 20
     },
     {
       "id": 2,
-      "amount": 600
+      "amount": 60
     },
     {
       "id": 2,
-      "amount": 500
+      "amount": 50
     },
     {
       "id": 1,
-      "amount": 500
+      "amount": 50
     },
     {
       "id": 2,
-      "amount": 500
+      "amount": 50
     }
   ],
   "accounts": [

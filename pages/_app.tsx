@@ -4,12 +4,12 @@ import "../styles/globals.css";
 
 import { getDefaultWallets, RainbowKitProvider } from "@rainbow-me/rainbowkit";
 import { configureChains, createConfig, sepolia, WagmiConfig } from "wagmi";
-import { arbitrumSepolia } from "wagmi/chains";
+import { arbitrum, arbitrumSepolia } from "wagmi/chains";
 import { publicProvider } from "wagmi/providers/public";
 import { createWalletClient, http } from "viem";
 
 const { chains, publicClient, webSocketPublicClient } = configureChains(
-  [arbitrumSepolia],
+  [arbitrum],
   [publicProvider()]
 );
 

@@ -5,7 +5,7 @@ import { MerkleTree } from "merkletreejs";
 import { useEffect, useState } from "react";
 import { useAccount } from "wagmi";
 import { checkIsPacketClaimed } from "../utils/checkIsClaimed";
-import mintRequestAndAccounts from "../utils/output.test.json";
+import mintRequestAndAccounts from "../utils/output.prod.json";
 
 interface MintRequest {
   id: number;

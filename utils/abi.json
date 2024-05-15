@@ -183,6 +183,46 @@
   },
   {
     "type": "function",
+    "name": "claimPacketsToOwner",
+    "inputs": [
+      {
+        "name": "mintReceiver",
+        "type": "address",
+        "internalType": "address"
+      },
+      {
+        "name": "receiver",
+        "type": "address",
+        "internalType": "address"
+      },
+      {
+        "name": "mintRequests",
+        "type": "tuple[]",
+        "internalType": "struct Packets.MintRequest[]",
+        "components": [
+          {
+            "name": "id",
+            "type": "uint256",
+            "internalType": "uint256"
+          },
+          {
+            "name": "amount",
+            "type": "uint256",
+            "internalType": "uint256"
+          }
+        ]
+      },
+      {
+        "name": "proofs",
+        "type": "bytes32[][]",
+        "internalType": "bytes32[][]"
+      }
+    ],
+    "outputs": [],
+    "stateMutability": "nonpayable"
+  },
+  {
+    "type": "function",
     "name": "currentBalance",
     "inputs": [
       {
@@ -1411,6 +1451,11 @@
   {
     "type": "error",
     "name": "ClaimEnded",
+    "inputs": []
+  },
+  {
+    "type": "error",
+    "name": "ClaimNotEnded",
     "inputs": []
   },
   {

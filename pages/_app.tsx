@@ -13,8 +13,8 @@ const { chains, publicClient, webSocketPublicClient } = configureChains(
 );
 
 const { connectors } = getDefaultWallets({
-  appName: "eth-blast",
-  projectId: "19f1c4bd49b1bcedd01449addb543a4f",
+  appName: "wits",
+  projectId: "151fefc365d4d7e68f0272463d8e7c34",
   chains,
 });
 

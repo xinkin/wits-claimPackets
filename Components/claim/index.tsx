@@ -145,25 +145,27 @@ const Claim = () => {
   return (
     <div className="flex flex-col gap-4 items-center justify-center min-w-screen-md rounded-xl border  p-4 border-mikado-200 bg-mikado-100/10">
       {address ? (
-        <div className="flex flex-col items-center justify-center gap-4 w-full">
+        <div className="flex items-center justify-center gap-4 w-full">
           {userPackets.length > 0 ? (
-            <>
-              <div className="flex flex-wrap items-center justify-center gap-4 w-full flex-shrink-0 flex-grow">
+            <div className="flex flex-col items-center gap-4">
+              <div className="flex items-center justify-center gap-4 w-full flex-shrink-0 flex-grow">
                 {userPackets.map((item: UserPacket) => (
                   <Card key={item?.id} data={item} />
                 ))}
               </div>
-              <Button
-                onClick={handleClaim}
-                // disabled={
-                //   !address ||
-                //   userPackets?.length === 0 ||
-                //   proofsAndRequests?.requests?.length === 0 ||
-                //   proofsAndRequests?.proofs?.length === 0
-                // }
-                text="claim"
-              />
-            </>
+              <div className="w-1/2">
+                <Button
+                  onClick={handleClaim}
+                  // disabled={
+                  //   !address ||
+                  //   userPackets?.length === 0 ||
+                  //   proofsAndRequests?.requests?.length === 0 ||
+                  //   proofsAndRequests?.proofs?.length === 0
+                  // }
+                  text="claim"
+                />
+              </div>
+            </div>
           ) : fetchingPackets ? (
             <Screen
               title="Please wait..."

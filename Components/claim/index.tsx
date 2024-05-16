@@ -9,7 +9,6 @@ import { deployedContractAddress } from "../../utils/constant";
 import Button from "../ui/Button";
 import Card from "../ui/Card";
 import Screen from "./Screen";
-import { arbitrumSepolia } from "viem/chains";
 import { CallWithERC2771Request, GelatoRelay } from "@gelatonetwork/relay-sdk";
 import { ethers } from "ethers";
 

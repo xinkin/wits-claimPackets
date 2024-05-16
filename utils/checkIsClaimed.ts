@@ -1,12 +1,12 @@
 import { ethers } from "ethersv5";
 import { deployedContractAddress } from "../utils/constant";
 import ABI from "./abi.json";
-import { arbitrumSepolia } from "viem/chains";
+import { arbitrum } from "viem/chains";
 
 export async function checkIsPacketClaimed(leaf: string) {
   // 1. Connect to Ethereum provider
   const provider = new ethers.providers.JsonRpcProvider(
-    arbitrumSepolia?.rpcUrls?.default.http[0]
+    arbitrum?.rpcUrls?.default.http[0]
   );
 
   // 2. Define ABI and contract address

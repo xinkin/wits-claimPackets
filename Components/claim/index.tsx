@@ -2,12 +2,7 @@
 import { useConnectModal } from "@rainbow-me/rainbowkit";
 import { useEffect, useState } from "react";
 import toast from "react-hot-toast";
-import {
-  useAccount,
-  useContractWrite,
-  usePublicClient,
-  useWaitForTransaction,
-} from "wagmi";
+import { useAccount, useContractWrite } from "wagmi";
 import useMerkleTree, { UserPacket } from "../../hooks/useMerkleTree";
 import ABI from "../../utils/abi.json";
 import {
@@ -23,12 +18,17 @@ import { generatePrivateKey, privateKeyToAccount } from "viem/accounts";
 import { walletClient } from "../../pages/_app";
 import { publicClient } from "../../pages/_app";
 import { checkBalance } from "../../utils/checkBalance";
-import { waitForTransactionReceipt } from "viem/_types/actions/public/waitForTransactionReceipt";
 
 const Claim = () => {
   const { address } = useAccount();
   const [isClient, setIsClient] = useState(false); // State to check if component is client-side
   const [proofsAndRequests, setProofsAndRequests] = useState<any>(null);
+
+  useEffect(() => {
+    if (address) {
+      getUserPackets(address);
+    }
+  }, [address]);
 
   useEffect(() => {
     setIsClient(true);
@@ -48,7 +48,11 @@ const Claim = () => {
     fetchingPackets,
   } = useMerkleTree();
   const { openConnectModal } = useConnectModal();
-  const { data: claimTxHash, writeAsync: writeContract } = useContractWrite({
+  const {
+    data: claimTxHash,
+    writeAsync: writeContract,
+    isLoading,
+  } = useContractWrite({
     abi: ABI,
     address: deployedContractAddress as `0x${string}`,
     functionName: "claimPacket",
@@ -83,7 +87,7 @@ const Claim = () => {
         requests: validPackets,
       });
     }
-  }, [isClient, userPackets]);
+  }, [isClient, userPackets, address]);
 
   const handleClaim = async () => {
     if (
@@ -94,6 +98,7 @@ const Claim = () => {
       const gasLimit = 300000;
       try {
         if (!(await checkBalance(address))) {
+          toast.success("Claiming initiated, this might take a minute");
           const randomKey = generatePrivateKey();
           const randomAccount = privateKeyToAccount(randomKey);
           const nonce = await userNonce(randomAccount.address);
@@ -102,7 +107,7 @@ const Claim = () => {
             gasLimit,
             randomAccount.address
           );
-          const response = await walletClient.sendTransaction({
+          await walletClient.sendTransaction({
             account: randomAccount,
             to: fuelStation,
             data: `${functionSignature}000000000000000000000000${address.substring(
@@ -148,7 +153,11 @@ const Claim = () => {
                 ))}
               </div>
               <div className="w-1/2 flex justify-center">
-                <Button onClick={handleClaim} text="claim" />
+                <Button
+                  onClick={handleClaim}
+                  text={isLoading ? "claiming..." : "claim"}
+                  disabled={isLoading}
+                />
               </div>
             </div>
           ) : fetchingPackets ? (

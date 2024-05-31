@@ -2,9 +2,13 @@
 import { useConnectModal } from "@rainbow-me/rainbowkit";
 import { useEffect, useState } from "react";
 import toast from "react-hot-toast";
+import { generatePrivateKey, privateKeyToAccount } from "viem/accounts";
 import { useAccount, useContractWrite, useNetwork } from "wagmi";
 import useMerkleTree, { UserPacket } from "../../hooks/useMerkleTree";
+import { publicClient, walletClient } from "../../pages/_app";
 import ABI from "../../utils/abi.json";
+import { skaleNebulaTestnetCustom } from "../../utils/chainTestnet";
+import { checkBalance } from "../../utils/checkBalance";
 import {
   deployedContractAddress,
   fuelStation,
@@ -14,12 +18,6 @@ import mineGasForTransaction from "../../utils/mineGas";
 import Button from "../ui/Button";
 import Card from "../ui/Card";
 import Screen from "./Screen";
-import { generatePrivateKey, privateKeyToAccount } from "viem/accounts";
-import { walletClient } from "../../pages/_app";
-import { publicClient } from "../../pages/_app";
-import { checkBalance } from "../../utils/checkBalance";
-import { skaleNebulaTestnet } from "viem/chains";
-import { skaleNebulaTestnetCustom } from "../../utils/chainTestnet";
 
 const Claim = () => {
   const { address } = useAccount();

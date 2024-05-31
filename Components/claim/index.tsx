@@ -2,7 +2,7 @@
 import { useConnectModal } from "@rainbow-me/rainbowkit";
 import { useEffect, useState } from "react";
 import toast from "react-hot-toast";
-import { useAccount, useContractWrite } from "wagmi";
+import { useAccount, useContractWrite, useNetwork } from "wagmi";
 import useMerkleTree, { UserPacket } from "../../hooks/useMerkleTree";
 import ABI from "../../utils/abi.json";
 import {
@@ -18,9 +18,12 @@ import { generatePrivateKey, privateKeyToAccount } from "viem/accounts";
 import { walletClient } from "../../pages/_app";
 import { publicClient } from "../../pages/_app";
 import { checkBalance } from "../../utils/checkBalance";
+import { skaleNebulaTestnet } from "viem/chains";
+import { skaleNebulaTestnetCustom } from "../../utils/chainTestnet";
 
 const Claim = () => {
   const { address } = useAccount();
+  const { chain } = useNetwork();
   const [isClient, setIsClient] = useState(false); // State to check if component is client-side
   const [proofsAndRequests, setProofsAndRequests] = useState<any>(null);
 
@@ -156,7 +159,9 @@ const Claim = () => {
                 <Button
                   onClick={handleClaim}
                   text={isLoading ? "claiming..." : "claim"}
-                  disabled={isLoading}
+                  disabled={
+                    isLoading || chain?.id != skaleNebulaTestnetCustom.id
+                  }
                 />
               </div>
             </div>

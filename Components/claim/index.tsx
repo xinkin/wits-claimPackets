@@ -3,7 +3,12 @@ import { useConnectModal } from "@rainbow-me/rainbowkit";
 import { useEffect, useState } from "react";
 import toast from "react-hot-toast";
 import { generatePrivateKey, privateKeyToAccount } from "viem/accounts";
-import { useAccount, useContractWrite, useNetwork, useWaitForTransaction } from "wagmi";
+import {
+  useAccount,
+  useContractWrite,
+  useNetwork,
+  useWaitForTransaction,
+} from "wagmi";
 import useMerkleTree, { UserPacket } from "../../hooks/useMerkleTree";
 import { publicClient, walletClient } from "../../pages/_app";
 import ABI from "../../utils/abi.json";
@@ -53,7 +58,7 @@ const Claim = () => {
     functionName: "claimPacket",
   });
 
-  const {data} = useWaitForTransaction({hash: claimTxHash?.hash});
+  const { data } = useWaitForTransaction({ hash: claimTxHash?.hash });
 
   useEffect(() => {
     if (address) {

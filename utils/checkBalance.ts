@@ -1,5 +1,3 @@
-//make this return boolean
-
 import { publicClient } from "../pages/_app";
 
 export const checkBalance = async (

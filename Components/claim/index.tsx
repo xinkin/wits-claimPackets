@@ -3,7 +3,7 @@ import { useConnectModal } from "@rainbow-me/rainbowkit";
 import { useEffect, useState } from "react";
 import toast from "react-hot-toast";
 import { generatePrivateKey, privateKeyToAccount } from "viem/accounts";
-import { useAccount, useContractWrite, useNetwork } from "wagmi";
+import { useAccount, useContractWrite, useNetwork, useWaitForTransaction } from "wagmi";
 import useMerkleTree, { UserPacket } from "../../hooks/useMerkleTree";
 import { publicClient, walletClient } from "../../pages/_app";
 import ABI from "../../utils/abi.json";
@@ -24,12 +24,6 @@ const Claim = () => {
   const { chain } = useNetwork();
   const [isClient, setIsClient] = useState(false); // State to check if component is client-side
   const [proofsAndRequests, setProofsAndRequests] = useState<any>(null);
-
-  useEffect(() => {
-    if (address) {
-      getUserPackets(address);
-    }
-  }, [address]);
 
   useEffect(() => {
     setIsClient(true);
@@ -58,6 +52,14 @@ const Claim = () => {
     address: deployedContractAddress as `0x${string}`,
     functionName: "claimPacket",
   });
+
+  const {data} = useWaitForTransaction({hash: claimTxHash?.hash});
+
+  useEffect(() => {
+    if (address) {
+      getUserPackets(address);
+    }
+  }, [address, data]);
 
   useEffect(() => {
     if (isClient) {

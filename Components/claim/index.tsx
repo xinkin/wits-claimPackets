@@ -12,7 +12,7 @@ import {
 import useMerkleTree, { UserPacket } from "../../hooks/useMerkleTree";
 import { publicClient, walletClient } from "../../pages/_app";
 import ABI from "../../utils/abi.json";
-import { skaleNebulaTestnetCustom } from "../../utils/chainTestnet";
+import { skaleNebula } from "viem/chains";
 import { checkBalance } from "../../utils/checkBalance";
 import {
   deployedContractAddress,
@@ -165,7 +165,7 @@ const Claim = () => {
                   onClick={handleClaim}
                   text={isLoading ? "claiming..." : "claim"}
                   disabled={
-                    isLoading || chain?.id != skaleNebulaTestnetCustom.id
+                    isLoading || chain?.id != skaleNebula.id
                   }
                 />
               </div>

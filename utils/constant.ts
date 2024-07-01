@@ -1,7 +1,7 @@
-export const isTestnet = true;
+export const isTestnet = false;
 
 export const deployedContractAddress =
-  "0xdE8C6c87301D06225B501D4233bCFB6606B8f29f";
+  "0x5120F677C9a453AC960eCA1fb274D25D96aAAdC5";
 
 export const fuelStation = isTestnet
   ? "0x000E9c53C4e2e21F5063f2e232d0AA907318dccb"

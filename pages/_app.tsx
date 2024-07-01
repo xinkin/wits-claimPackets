@@ -10,21 +10,21 @@ import {
   WagmiConfig,
 } from "wagmi";
 import { publicProvider } from "wagmi/providers/public";
-import { skaleNebulaTestnetCustom } from "../utils/chainTestnet";
+import { skaleNebula } from "viem/chains";
 import { createPublicClient, createWalletClient, http } from "viem";
 
 export const { chains, webSocketPublicClient } = configureChains(
-  [skaleNebulaTestnetCustom],
+  [skaleNebula],
   [publicProvider()]
 );
 
 export const publicClient = createPublicClient({
-  chain: skaleNebulaTestnetCustom,
+  chain: skaleNebula,
   transport: http(),
 });
 
 export const walletClient = createWalletClient({
-  chain: skaleNebulaTestnetCustom,
+  chain: skaleNebula,
   transport: http(),
 });
 

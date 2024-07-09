@@ -103,7 +103,7 @@ const Claim = () => {
       proofsAndRequests?.requests?.length > 0 &&
       proofsAndRequests?.proofs?.length > 0
     ) {
-      const gasLimit = 300000;
+      const gasLimit = 100000;
       try {
         if (!(await checkBalance(address))) {
           toast.success("Claiming initiated, this might take a minute");
@@ -164,9 +164,7 @@ const Claim = () => {
                 <Button
                   onClick={handleClaim}
                   text={isLoading ? "claiming..." : "claim"}
-                  disabled={
-                    isLoading || chain?.id != skaleNebula.id
-                  }
+                  disabled={isLoading || chain?.id != skaleNebula.id}
                 />
               </div>
             </div>

@@ -2,7 +2,7 @@
 import { useConnectModal } from "@rainbow-me/rainbowkit";
 import { useEffect, useState } from "react";
 import toast from "react-hot-toast";
-import { generatePrivateKey, privateKeyToAccount } from "viem/accounts";
+import { skaleNebula } from "viem/chains";
 import {
   useAccount,
   useContractWrite,
@@ -10,16 +10,11 @@ import {
   useWaitForTransaction,
 } from "wagmi";
 import useMerkleTree, { UserPacket } from "../../hooks/useMerkleTree";
-import { publicClient, walletClient } from "../../pages/_app";
+import { publicClient } from "../../pages/_app";
 import ABI from "../../utils/abi.json";
-import { skaleNebula } from "viem/chains";
 import { checkBalance } from "../../utils/checkBalance";
-import {
-  deployedContractAddress,
-  fuelStation,
-  functionSignature,
-} from "../../utils/constant";
-import mineGasForTransaction from "../../utils/mineGas";
+import { deployedContractAddress } from "../../utils/constant";
+import { dripGas } from "../../utils/mineGas";
 import Button from "../ui/Button";
 import Card from "../ui/Card";
 import Screen from "./Screen";
@@ -33,11 +28,6 @@ const Claim = () => {
   useEffect(() => {
     setIsClient(true);
   }, []);
-
-  const userNonce = async (address: `0x${string}`) => {
-    const nonce = await publicClient.getTransactionCount({ address });
-    return nonce;
-  };
 
   const {
     generateProof,
@@ -65,6 +55,12 @@ const Claim = () => {
       getUserPackets(address);
     }
   }, [address, data]);
+
+  useEffect(() => {
+    if (address && userPackets.length > 0) {
+      dripGas(address);
+    }
+  }, [address, userPackets]);
 
   useEffect(() => {
     if (isClient) {
@@ -103,27 +99,9 @@ const Claim = () => {
       proofsAndRequests?.requests?.length > 0 &&
       proofsAndRequests?.proofs?.length > 0
     ) {
-      const gasLimit = 100000;
       try {
-        if (!(await checkBalance(address))) {
-          toast.success("Claiming initiated, this might take a minute");
-          const randomKey = generatePrivateKey();
-          const randomAccount = privateKeyToAccount(randomKey);
-          const nonce = await userNonce(randomAccount.address);
-          const { gasPrice } = await mineGasForTransaction(
-            nonce,
-            gasLimit,
-            randomAccount.address
-          );
-          await walletClient.sendTransaction({
-            account: randomAccount,
-            to: fuelStation,
-            data: `${functionSignature}000000000000000000000000${address.substring(
-              2
-            )}`,
-            gasPrice,
-          });
-        }
+        toast.success("Claiming initiated, this might take a minute");
+        await dripGas(address);
 
         await writeContract({
           args: [address, proofsAndRequests.requests, proofsAndRequests.proofs],

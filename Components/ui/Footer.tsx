@@ -10,7 +10,7 @@ const Footer = () => {
     setShowFullText(!showFullText);
   };
   return (
-    <footer className="bg-mikado-950 border-t border-mikado-100">
+    <footer className="bg-mikado-950 border-t border-mikado-100 font-lato">
       <div className="mx-auto max-w-5xl px-4 py-16 sm:px-6 lg:px-8">
         <div className="flex items-center justify-center text-mikado-300 gap-4">
           <Image
@@ -20,9 +20,11 @@ const Footer = () => {
             width={40}
             className="rounded-md"
           />
-          <span className="text-4xl font-semibold">What Is This Sorcery</span>
+          <span className="text-4xl font-semibold font-beaufort">
+            What Is This Sorcery
+          </span>
         </div>
-        <p className="mx-auto mt-6 max-w-5xl text-center leading-relaxed text-mikado-50/50">
+        <p className="mx-auto mt-6 max-w-5xl text-center leading-relaxed text-mikado-50/50 font-lato">
           {showFullText ? (
             <>
               What is WITS? WITS, short for &apos;What is This Sorcery?&apos;,
@@ -43,7 +45,10 @@ const Footer = () => {
               not in the traditional sense of mining, but as a powerful wizard
               who extracts magical essence, akin to how cryptocurrencies are
               mined. (
-              <button className="text-mikado-300" onClick={toggleText}>
+              <button
+                className="text-mikado-300 font-lato"
+                onClick={toggleText}
+              >
                 ...show less
               </button>
               )

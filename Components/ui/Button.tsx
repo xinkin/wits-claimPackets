@@ -13,7 +13,7 @@ const Button: React.FC<ButtonProps> = ({ onClick, disabled, text }) => {
       disabled={disabled}
       className="relative group disabled:cursor-not-allowed disabled:opacity-50"
     >
-      <div className="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 text-gold group-hover:text-black group-active:text-black font-dragon uppercase">
+      <div className="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 text-gold group-hover:text-black group-active:text-black font-beaufort uppercase">
         {text}
       </div>
       <picture>

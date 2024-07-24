@@ -9,6 +9,10 @@ module.exports = {
     "./src/**/*.{js,ts,jsx,tsx,mdx}",
   ],
   theme: {
+    fontFamily: {
+      beaufort: ["BeaufortPro", "sans-serif"],
+      lato: ["Lato", "sans-serif"],
+    },
     extend: {
       colors: {
         mikado: {

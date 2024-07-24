@@ -13,7 +13,7 @@ const Home: NextPage = () => {
       </Head>
 
       <div className="min-h-screen flex flex-col items-center justify-center px-4 gap-16">
-        <span className=" text-mikado-100 text-xl text-center leading-relaxed">
+        <span className=" text-mikado-100 text-xl text-center leading-relaxed font-beaufort">
           Migrate your packets from Ethereum to SKALE
           <br />
           Connect Wallet and Open your Packets

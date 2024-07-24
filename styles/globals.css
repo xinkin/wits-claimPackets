@@ -2,6 +2,8 @@
 @tailwind components;
 @tailwind utilities;
 
+@import url('https://fonts.googleapis.com/css2?family=Lato:ital,wght@0,100;0,300;0,400;0,700;0,900;1,100;1,300;1,400;1,700;1,900&display=swap');
+
 :root {
   --mikado-50: #f7f9ed;
   --mikado-100: #ecf0d1;
@@ -35,4 +37,74 @@ body {
   color: var(--mikado-950) !important;
   background-color: var(--mikado-100) !important;
   font-size: 14px !important;
+}
+
+@font-face {
+  font-family: "BeaufortPro";
+  src: url('../fonts/BeaufortPro-thin.otf') format('opentype');
+  font-weight: 100;
+  font-style: normal;
+}
+
+@font-face {
+  font-family: "BeaufortPro";
+  src: url('../fonts/BeaufortPro-thinItalic.otf') format('opentype');
+  font-weight: 100;
+  font-style: italic;
+}
+
+@font-face {
+  font-family: "BeaufortPro";
+  src: url('../fonts/BeaufortPro-light.otf') format('opentype');
+  font-weight: 300;
+  font-style: normal;
+}
+
+@font-face {
+  font-family: "BeaufortPro";
+  src: url('../fonts/BeaufortPro-lightItalic.otf') format('opentype');
+  font-weight: 300;
+  font-style: italic;
+}
+
+@font-face {
+  font-family: "BeaufortPro";
+  src: url('../fonts/BeaufortPro-regular.otf') format('opentype');
+  font-weight: 400;
+  font-style: normal;
+}
+
+@font-face {
+  font-family: "BeaufortPro";
+  src: url('../fonts/BeaufortPro-regularItalic.otf') format('opentype');
+  font-weight: 400;
+  font-style: italic;
+}
+
+@font-face {
+  font-family: "BeaufortPro";
+  src: url('../fonts/BeaufortPro-medium.otf') format('opentype');
+  font-weight: 500;
+  font-style: normal;
+}
+
+@font-face {
+  font-family: "BeaufortPro";
+  src: url('../fonts/BeaufortPro-mediumItalic.otf') format('opentype');
+  font-weight: 500;
+  font-style: italic;
+}
+
+@font-face {
+  font-family: "BeaufortPro";
+  src: url('../fonts/BeaufortPro-bold.otf') format('opentype');
+  font-weight: 700;
+  font-style: normal;
+}
+
+@font-face {
+  font-family: "BeaufortPro";
+  src: url('../fonts/BeaufortPro-boldItalic.otf') format('opentype');
+  font-weight: 700;
+  font-style: italic;
 }

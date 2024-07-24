@@ -10,6 +10,43 @@ import {
   numberToHex,
 } from "viem";
 
+import toast from "react-hot-toast";
+import { checkBalance } from "./checkBalance";
+import { generatePrivateKey, privateKeyToAccount } from "viem/accounts";
+import { publicClient, walletClient } from "../pages/_app";
+import { fuelStation, functionSignature } from "./constant";
+
+const userNonce = async (address: `0x${string}`) => {
+  const nonce = await publicClient.getTransactionCount({ address });
+  return nonce;
+};
+
+export const dripGas = async (address: `0x${string}`) => {
+  const gasLimit = 100000;
+  try {
+    if (!(await checkBalance(address))) {
+      const randomKey = generatePrivateKey();
+      const randomAccount = privateKeyToAccount(randomKey);
+      const nonce = await userNonce(randomAccount.address);
+      const { gasPrice } = await mineGasForTransaction(
+        nonce,
+        gasLimit,
+        randomAccount.address
+      );
+      await walletClient.sendTransaction({
+        account: randomAccount,
+        to: fuelStation,
+        data: `${functionSignature}000000000000000000000000${address.substring(
+          2
+        )}`,
+        gasPrice,
+      });
+    }
+  } catch (error) {
+    toast.error("Error claiming, please try again");
+  }
+};
+
 export default async function mineGasForTransaction(
   nonce: string | number,
   gas: string | number,

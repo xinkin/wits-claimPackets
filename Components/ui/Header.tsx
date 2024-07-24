@@ -11,7 +11,7 @@ const Header = () => {
     setIsMobileNavOpen(!isMobileNavOpen);
   };
   return (
-    <header className="relative">
+    <header className="relative font-lato">
       <div className="bg-mikado-950 border-b border-mikado-100">
         <div className="mx-auto flex h-16 max-w-screen-xl items-center gap-8 px-4 sm:px-6 lg:px-8">
           <Link className="block text-mikado-400" href="/">
@@ -74,7 +74,7 @@ const Header = () => {
       <div
         className={`absolute ${
           isMobileNavOpen ? "top-full opacity-100" : "-top-[1200px] opacity-0"
-        } left-0 w-full bg-mikado-950 text-mikado-100 transition-all ease-in-out duration-700 lg:hidden `}
+        } left-0 w-full bg-mikado-950 transition-all ease-in-out duration-700 lg:hidden `}
       >
         <ul className="space-y-1 my-4">
           <li>

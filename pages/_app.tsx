@@ -3,14 +3,30 @@ import type { AppProps } from "next/app";
 import "../styles/globals.css";
 
 import { getDefaultWallets, RainbowKitProvider } from "@rainbow-me/rainbowkit";
-import { configureChains, createConfig, sepolia, WagmiConfig } from "wagmi";
-import { arbitrum } from "wagmi/chains";
+import {
+  configureChains,
+  createConfig,
+  usePublicClient,
+  WagmiConfig,
+} from "wagmi";
 import { publicProvider } from "wagmi/providers/public";
+import { skaleNebula } from "viem/chains";
+import { createPublicClient, createWalletClient, http } from "viem";
 
-const { chains, publicClient, webSocketPublicClient } = configureChains(
-  [arbitrum],
+export const { chains, webSocketPublicClient } = configureChains(
+  [skaleNebula],
   [publicProvider()]
 );
+
+export const publicClient = createPublicClient({
+  chain: skaleNebula,
+  transport: http(),
+});
+
+export const walletClient = createWalletClient({
+  chain: skaleNebula,
+  transport: http(),
+});
 
 const { connectors } = getDefaultWallets({
   appName: "wits",

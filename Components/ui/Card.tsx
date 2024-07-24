@@ -26,8 +26,10 @@ const Card = ({ data }: { data: UserPacket }) => {
           </div>
         ) : null}
       </div>
-      <h3>#{data?.request?.id} - WITS: Quill and Ink</h3>
-      <p className="text-mikado-500/70">
+      <h3 className="font-beaufort">
+        #{data?.request?.id} - WITS: Quill and Ink
+      </h3>
+      <p className="text-mikado-500/70 font-lato">
         Claimable amount : {data?.request?.amount}
       </p>
     </div>

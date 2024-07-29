@@ -20,7 +20,7 @@ const Footer = () => {
             width={40}
             className="rounded-md"
           />
-          <span className="text-4xl font-semibold font-beaufort">
+          <span className="text-4xl font-semibold font-beaufort uppercase">
             What Is This Sorcery
           </span>
         </div>

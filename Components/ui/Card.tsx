@@ -26,7 +26,7 @@ const Card = ({ data }: { data: UserPacket }) => {
           </div>
         ) : null}
       </div>
-      <h3 className="font-beaufort">
+      <h3 className="font-beaufort uppercase">
         #{data?.request?.id} - WITS: Quill and Ink
       </h3>
       <p className="text-mikado-500/70 font-lato">

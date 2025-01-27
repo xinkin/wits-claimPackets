@@ -1,11 +1,11 @@
 import { ethers } from "ethersv5";
 import { deployedContractAddress } from "../utils/constant";
 import ABI from "./abi.json";
-import { skaleNebula } from "viem/chains";
+import { abstractTestnet } from "viem/chains";
 
 export async function checkIsPacketClaimed(leaf: string) {
   const provider = new ethers.providers.JsonRpcProvider(
-    skaleNebula?.rpcUrls?.default.http[0]
+    abstractTestnet?.rpcUrls?.default.http[0],
   );
 
   const abi = ABI;

@@ -19,7 +19,7 @@ export interface UserPacket {
 }
 interface MerkleTreeResponse {
   root: string;
-  leavesBuffer: Uint8Array[];
+  leavesBuffer: Buffer[];
   leaves: string[];
 }
 
@@ -28,7 +28,7 @@ const mintRequests: MintRequest[] = mintRequestAndAccounts.mintRequests;
 // Setup addresses
 const accounts: string[] = mintRequestAndAccounts.accounts;
 
-function generateLeaf(account: string, mintRequest: MintRequest): Uint8Array {
+function generateLeaf(account: string, mintRequest: MintRequest): Buffer {
   return KECCAK256(
     ethers.utils.defaultAbiCoder.encode(
       ["address", "uint256", "uint256"],

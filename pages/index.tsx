@@ -27,7 +27,6 @@ const Home: NextPage = () => {
             https://www.wits.academy/
           </a>
         </span>
-
         <Claim />
       </div>
     </MainLayout>

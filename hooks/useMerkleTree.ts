@@ -32,8 +32,8 @@ function generateLeaf(account: string, mintRequest: MintRequest): Uint8Array {
   return KECCAK256(
     ethers.utils.defaultAbiCoder.encode(
       ["address", "uint256", "uint256"],
-      [account, mintRequest.id, mintRequest.amount]
-    )
+      [account, mintRequest.id, mintRequest.amount],
+    ),
   );
 }
 
@@ -42,7 +42,7 @@ const buf2hex = (x: any) => "0x" + x.toString("hex");
 const useMerkleTree = () => {
   const { address, isConnected } = useAccount();
   const [merkelTree, setMerkelTree] = useState<MerkleTreeResponse | undefined>(
-    undefined
+    undefined,
   );
   const [userPackets, setUserPackets] = useState<UserPacket[]>([]);
   const [fetchingPackets, setfetchingPackets] = useState(false);
@@ -51,13 +51,13 @@ const useMerkleTree = () => {
     setMerkelTree(generateMerkle(accounts, mintRequests));
   }, []);
 
-  useEffect(() => {
-    getUserPackets(address);
-  }, [address, isConnected]);
+  // useEffect(() => {
+  //   getUserPackets(address);
+  // }, [address, isConnected]);
 
   const generateMerkle = (accounts: string[], mintRequests: MintRequest[]) => {
     const leaves = mintRequests.map((mintRequest, index) =>
-      generateLeaf(accounts[index], mintRequest)
+      generateLeaf(accounts[index], mintRequest),
     );
     const tree = new MerkleTree(leaves, KECCAK256, { sortPairs: true });
 
@@ -74,10 +74,10 @@ const useMerkleTree = () => {
     account: string,
     mintRequest: MintRequest,
     accounts: string[],
-    mintRequests: MintRequest[]
+    mintRequests: MintRequest[],
   ) => {
     const leaves = mintRequests.map((mintRequest, index) =>
-      generateLeaf(accounts[index], mintRequest)
+      generateLeaf(accounts[index], mintRequest),
     );
     const tree = new MerkleTree(leaves, KECCAK256, { sortPairs: true });
 
@@ -90,6 +90,7 @@ const useMerkleTree = () => {
   };
 
   const getUserPackets = async (account: `0x${string}` | undefined) => {
+    console.log("getUserPackets called with account:", account);
     setfetchingPackets(true);
     const userPackets = [];
     if (account) {
@@ -100,7 +101,7 @@ const useMerkleTree = () => {
         // If the account matches the requested address, add it to userPackets
         if (address.toLowerCase() === account.toLowerCase()) {
           const isClaimed = await checkIsPacketClaimed(
-            buf2hex(generateLeaf(address, request))
+            buf2hex(generateLeaf(address, request)),
           );
           userPackets.push({
             id: userPackets.length,

@@ -1,11 +1,10 @@
 "use client";
-import { useEffect, useState } from "react";
+import { useEffect, useState, useRef } from "react";
 import toast from "react-hot-toast";
 import { useAccount } from "wagmi";
 import useMerkleTree, { UserPacket } from "../../hooks/useMerkleTree";
 
 import ABI from "../../utils/abi.json";
-// import { checkBalance } from "../../utils/checkBalance";
 import { deployedContractAddress } from "../../utils/constant";
 
 import Button from "../ui/Button";
@@ -16,45 +15,55 @@ import { Address } from "viem";
 import RequiredInfoModal from "../../Components/ui/PopupModal";
 import { useWriteContractSponsored } from "@abstract-foundation/agw-react";
 import { getGeneralPaymasterInput } from "viem/zksync";
+import { usePersistentState } from "../../hooks/usePersistantState";
 
 const Claim = () => {
   const { address: agwAddress, isConnected } = useAccount();
-  const [address, setaddress] = useState<Address>();
+  const [address, setAddress] = usePersistentState("address", undefined);
   const [isLinked, setIsLinked] = useState(false);
   const [modalOpen, setModalOpen] = useState(false);
-  const [isClient, setIsClient] = useState(false); // State to check if component is client-side
+  const [isClient, setIsClient] = useState(false);
   const [proofsAndRequests, setProofsAndRequests] = useState<any>(null);
 
   const { data: agwClient } = useAbstractClient();
 
   useEffect(() => {
     let isMounted = true;
-    setIsLinked(false);
-    setaddress(undefined);
-    setModalOpen(false);
 
     const checkLinkedAccounts = async () => {
-      if (!agwClient) return;
+      if (!agwClient || !isConnected) return;
+
       try {
         const { linkedAccounts } = await agwClient.getLinkedAccounts({
           agwAddress: agwAddress as Address,
         });
-        if (isMounted) {
-          console.log("Checking linked accounts for:", agwAddress);
-          console.log("Found accounts:", linkedAccounts);
 
-          if (linkedAccounts.length > 0) {
-            setIsLinked(true);
-            setaddress(linkedAccounts[0]);
-          }
+        if (!isMounted) return;
+
+        console.log("Checking linked accounts for:", agwAddress);
+        console.log("Found accounts:", linkedAccounts);
+
+        setIsLinked(false);
+        setAddress(undefined);
+
+        if (linkedAccounts.length > 0) {
+          setIsLinked(true);
+          setAddress(linkedAccounts[0]);
+          setModalOpen(true);
+        } else if (isConnected) {
           setModalOpen(true);
         }
       } catch (error) {
         console.error("Error in getting linked accounts", error);
+        if (isMounted) {
+          setIsLinked(false);
+          setAddress(undefined);
+        }
       }
     };
 
     checkLinkedAccounts();
+
     return () => {
       isMounted = false;
     };
@@ -76,19 +85,11 @@ const Claim = () => {
   const { writeContractSponsored, data, error, isSuccess, isPending } =
     useWriteContractSponsored();
 
-  console.log(data);
-
   useEffect(() => {
     if (address) {
       getUserPackets(address);
     }
   }, [address, isSuccess, isConnected]);
-
-  useEffect(() => {
-    if (address && userPackets.length > 0) {
-      // dripGas(address);
-    }
-  }, [address, userPackets]);
 
   useEffect(() => {
     if (isClient) {
@@ -130,27 +131,20 @@ const Claim = () => {
       try {
         toast.success("Claiming initiated, this might take a minute");
 
-        if (!agwClient) return;
+        console.log("address", address);
+        console.log("proofsAndRequests.requests", proofsAndRequests.requests);
+        console.log("proofsAndRequests.proofs", proofsAndRequests.proofs);
 
-        const transactionHash = await agwClient.writeContract({
+        writeContractSponsored({
           abi: ABI,
           address: deployedContractAddress,
           functionName: "claimPacket",
           args: [address, proofsAndRequests.requests, proofsAndRequests.proofs],
+          paymaster: "0x5407B5040dec3D339A9247f3654E59EEccbb6391",
+          paymasterInput: getGeneralPaymasterInput({
+            innerInput: "0x",
+          }),
         });
-
-        console.log("Transaction hash:", transactionHash);
-
-        // writeContractSponsored({
-        //   abi: ABI,
-        //   address: deployedContractAddress,
-        //   functionName: "claimPacket",
-        //   args: [address, proofsAndRequests.requests, proofsAndRequests.proofs],
-        //   paymaster: "0x62aff60940841bBe7261dc6C4bb873F6f91fFdb3",
-        //   paymasterInput: getGeneralPaymasterInput({
-        //     innerInput: "0x",
-        //   }),
-        // });
         await getUserPackets(address);
 
         toast.success("transaction initiated");

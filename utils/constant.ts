@@ -1,5 +1,5 @@
 export const deployedContractAddress =
-  "0x190CC4D249af8825B40dB622C45AEF43d8473212";
+  "0xac6fA954a7F9879033B48ddB766024c1D16fF180";
 
-export const abstractLinkingPortal = "https://link-testnet.abs.xyz/";
-export const abstractTestnetRPC = "https://api.testnet.abs.xyz";
+export const abstractLinkingPortal = "https://link.abs.xyz/";
+export const abstractTestnetRPC = "https://api.mainnet.abs.xyz";

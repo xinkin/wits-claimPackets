@@ -1,11 +1,14 @@
-import { ConnectButton } from "@rainbow-me/rainbowkit";
 import Image from "next/image";
 import Link from "next/link";
 import React, { useState } from "react";
 import { HiMenu } from "react-icons/hi";
+import { useLoginWithAbstract } from "@abstract-foundation/agw-react";
+import { useAccount } from "wagmi";
 
 const Header = () => {
   const [isMobileNavOpen, setIsMobileNavOpen] = useState(false);
+  const { login, logout } = useLoginWithAbstract();
+  const { address, isConnected } = useAccount();
 
   const toggleMobileNav = () => {
     setIsMobileNavOpen(!isMobileNavOpen);
@@ -56,10 +59,22 @@ const Header = () => {
             </nav>
 
             <div className="flex items-center gap-4">
-              <div className="sm:flex sm:gap-4">
-                <ConnectButton label="CONNECT" />
-              </div>
-
+              <button
+                className="sm:flex sm:gap-4 block rounded bg-mikado-400/5 p-2.5 text-mikado-300 transition hover:text-mikado-400/75"
+                onClick={login}
+              >
+                {isConnected
+                  ? address?.slice(0, 6) + "..." + address?.slice(-4)
+                  : "Connect"}
+              </button>
+              {isConnected && (
+                <button
+                  onClick={logout}
+                  className="sm:flex sm:gap-4 block rounded bg-mikado-400/5 p-2.5 text-mikado-300 transition hover:text-mikado-400/75"
+                >
+                  Disconnect
+                </button>
+              )}
               <button
                 onClick={toggleMobileNav}
                 className="block rounded bg-mikado-400/5 p-2.5 text-mikado-300 transition hover:text-mikado-400/75 md:hidden"

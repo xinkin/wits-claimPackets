@@ -1,29 +1,73 @@
 "use client";
-import { useConnectModal } from "@rainbow-me/rainbowkit";
-import { useEffect, useState } from "react";
+import { useEffect, useState, useRef } from "react";
 import toast from "react-hot-toast";
-import { skaleNebula } from "viem/chains";
-import {
-  useAccount,
-  useContractWrite,
-  useNetwork,
-  useWaitForTransaction,
-} from "wagmi";
+import { useAccount } from "wagmi";
 import useMerkleTree, { UserPacket } from "../../hooks/useMerkleTree";
-import { publicClient } from "../../pages/_app";
+
 import ABI from "../../utils/abi.json";
-import { checkBalance } from "../../utils/checkBalance";
 import { deployedContractAddress } from "../../utils/constant";
-import { dripGas } from "../../utils/mineGas";
+
 import Button from "../ui/Button";
 import Card from "../ui/Card";
 import Screen from "./Screen";
+import { useAbstractClient } from "@abstract-foundation/agw-react";
+import { Address } from "viem";
+import RequiredInfoModal from "../../Components/ui/PopupModal";
+import { useWriteContractSponsored } from "@abstract-foundation/agw-react";
+import { getGeneralPaymasterInput } from "viem/zksync";
+import { usePersistentState } from "../../hooks/usePersistantState";
 
 const Claim = () => {
-  const { address } = useAccount();
-  const { chain } = useNetwork();
-  const [isClient, setIsClient] = useState(false); // State to check if component is client-side
+  const { address: agwAddress, isConnected } = useAccount();
+  const [address, setAddress] = usePersistentState("address", undefined);
+  const [isLinked, setIsLinked] = useState(false);
+  const [modalOpen, setModalOpen] = useState(false);
+  const [isClient, setIsClient] = useState(false);
   const [proofsAndRequests, setProofsAndRequests] = useState<any>(null);
+
+  const { data: agwClient } = useAbstractClient();
+
+  useEffect(() => {
+    let isMounted = true;
+
+    const checkLinkedAccounts = async () => {
+      if (!agwClient || !isConnected) return;
+
+      try {
+        const { linkedAccounts } = await agwClient.getLinkedAccounts({
+          agwAddress: agwAddress as Address,
+        });
+
+        if (!isMounted) return;
+
+        console.log("Checking linked accounts for:", agwAddress);
+        console.log("Found accounts:", linkedAccounts);
+
+        setIsLinked(false);
+        setAddress(undefined);
+
+        if (linkedAccounts.length > 0) {
+          setIsLinked(true);
+          setAddress(linkedAccounts[0]);
+          setModalOpen(true);
+        } else if (isConnected) {
+          setModalOpen(true);
+        }
+      } catch (error) {
+        console.error("Error in getting linked accounts", error);
+        if (isMounted) {
+          setIsLinked(false);
+          setAddress(undefined);
+        }
+      }
+    };
+
+    checkLinkedAccounts();
+
+    return () => {
+      isMounted = false;
+    };
+  }, [agwClient, agwAddress, isConnected]);
 
   useEffect(() => {
     setIsClient(true);
@@ -37,30 +81,15 @@ const Claim = () => {
     accounts,
     fetchingPackets,
   } = useMerkleTree();
-  const { openConnectModal } = useConnectModal();
-  const {
-    data: claimTxHash,
-    writeAsync: writeContract,
-    isLoading,
-  } = useContractWrite({
-    abi: ABI,
-    address: deployedContractAddress as `0x${string}`,
-    functionName: "claimPacket",
-  });
 
-  const { data } = useWaitForTransaction({ hash: claimTxHash?.hash });
+  const { writeContractSponsored, data, error, isSuccess, isPending } =
+    useWriteContractSponsored();
 
   useEffect(() => {
     if (address) {
       getUserPackets(address);
     }
-  }, [address, data]);
-
-  useEffect(() => {
-    if (address && userPackets.length > 0) {
-      dripGas(address);
-    }
-  }, [address, userPackets]);
+  }, [address, isSuccess, isConnected]);
 
   useEffect(() => {
     if (isClient) {
@@ -74,8 +103,8 @@ const Claim = () => {
               packet.address,
               packet.request,
               accounts,
-              mintRequests
-            )
+              mintRequests,
+            ),
           );
         }
       });
@@ -101,19 +130,22 @@ const Claim = () => {
     ) {
       try {
         toast.success("Claiming initiated, this might take a minute");
-        await dripGas(address);
 
-        await writeContract({
+        console.log("address", address);
+        console.log("proofsAndRequests.requests", proofsAndRequests.requests);
+        console.log("proofsAndRequests.proofs", proofsAndRequests.proofs);
+
+        writeContractSponsored({
+          abi: ABI,
+          address: deployedContractAddress,
+          functionName: "claimPacket",
           args: [address, proofsAndRequests.requests, proofsAndRequests.proofs],
-          value: BigInt(0),
+          paymaster: "0x5407B5040dec3D339A9247f3654E59EEccbb6391",
+          paymasterInput: getGeneralPaymasterInput({
+            innerInput: "0x",
+          }),
         });
-
-        if (claimTxHash) {
-          await publicClient.waitForTransactionReceipt({
-            hash: claimTxHash?.hash,
-          });
-          await getUserPackets(address);
-        }
+        await getUserPackets(address);
 
         toast.success("transaction initiated");
       } catch (error) {
@@ -129,9 +161,15 @@ const Claim = () => {
 
   return (
     <div className="flex flex-col gap-4 items-center justify-center min-w-screen-md rounded-xl border p-4 border-mikado-200 bg-mikado-100/10">
-      {address ? (
+      {isConnected ? (
         <div className="flex items-center justify-center gap-4 w-full">
-          {userPackets.length > 0 ? (
+          <RequiredInfoModal
+            isOpen={modalOpen}
+            onOpenChange={setModalOpen}
+            isAccountLinked={isLinked}
+            linkedAccount={address}
+          />
+          {userPackets.length > 0 && address ? (
             <div className="flex flex-col items-center gap-4">
               <div className="flex items-center justify-center gap-4 w-full flex-shrink-0 flex-grow">
                 {userPackets.map((item: UserPacket) => (
@@ -141,8 +179,8 @@ const Claim = () => {
               <div className="w-1/2 flex justify-center">
                 <Button
                   onClick={handleClaim}
-                  text={isLoading ? "claiming..." : "claim"}
-                  disabled={isLoading || chain?.id != skaleNebula.id}
+                  text={isPending ? "claiming..." : "claim"}
+                  disabled={isPending}
                 />
               </div>
             </div>
@@ -159,9 +197,10 @@ const Claim = () => {
           )}
         </div>
       ) : (
-        <Screen title="Welcome" desc="Please connect your wallet to continue">
-          <Button onClick={openConnectModal} text="connect" />
-        </Screen>
+        <Screen
+          title="Welcome"
+          desc="Please connect your wallet to continue"
+        ></Screen>
       )}
     </div>
   );

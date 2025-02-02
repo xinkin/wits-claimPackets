@@ -14,7 +14,7 @@ const Home: NextPage = () => {
 
       <div className="min-h-screen flex flex-col items-center justify-center px-4 gap-16">
         <span className=" text-mikado-100 text-xl text-center leading-relaxed font-beaufort uppercase">
-          Migrate your packets from Ethereum to SKALE
+          Migrate your packets from Ethereum to Abstract
           <br />
           Connect Wallet and Open your Packets
           <br />
@@ -27,7 +27,6 @@ const Home: NextPage = () => {
             https://www.wits.academy/
           </a>
         </span>
-
         <Claim />
       </div>
     </MainLayout>

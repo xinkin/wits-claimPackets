@@ -3,4 +3,4 @@ export const deployedContractAddress =
 
 export const abstractLinkingPortal = "https://link.abs.xyz/";
 // export const PAYMASTER_ADDRESS = "0x94C09162F514A86b458Ba13beC0899ffb68A19c7";
-export const PAYMASTER_ADDRESS = "0x5f75695Ec3E41C48D415726B4C1A3eB00F2FFCEE";
+export const PAYMASTER_ADDRESS = "0x2985836a8Cf11B680B4fc29eBd235556d6FC34A5";

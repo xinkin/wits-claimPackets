@@ -127,6 +127,10 @@ const Claim = () => {
       try {
         toast.success("Claiming initiated, this might take a minute");
 
+        console.log("requests", proofsAndRequests.requests);
+        console.log("proofs", proofsAndRequests.proofs);
+        console.log("address", address);
+
         writeContractSponsored({
           abi: ABI,
           address: deployedContractAddress,

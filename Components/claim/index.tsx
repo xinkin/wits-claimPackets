@@ -140,7 +140,7 @@ const Claim = () => {
           address: deployedContractAddress,
           functionName: "claimPacket",
           args: [address, proofsAndRequests.requests, proofsAndRequests.proofs],
-          paymaster: "0x5407B5040dec3D339A9247f3654E59EEccbb6391",
+          paymaster: "0x94C09162F514A86b458Ba13beC0899ffb68A19c7",
           paymasterInput: getGeneralPaymasterInput({
             innerInput: "0x",
           }),

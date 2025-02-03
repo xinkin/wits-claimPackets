@@ -1,12 +1,10 @@
 "use client";
-import { useEffect, useState, useRef } from "react";
+import { useEffect, useState } from "react";
 import toast from "react-hot-toast";
 import { useAccount } from "wagmi";
 import useMerkleTree, { UserPacket } from "../../hooks/useMerkleTree";
-
 import ABI from "../../utils/abi.json";
 import { deployedContractAddress } from "../../utils/constant";
-
 import Button from "../ui/Button";
 import Card from "../ui/Card";
 import Screen from "./Screen";
@@ -16,6 +14,7 @@ import RequiredInfoModal from "../../Components/ui/PopupModal";
 import { useWriteContractSponsored } from "@abstract-foundation/agw-react";
 import { getGeneralPaymasterInput } from "viem/zksync";
 import { usePersistentState } from "../../hooks/usePersistantState";
+import { PAYMASTER_ADDRESS } from "../../utils/constant";
 
 const Claim = () => {
   const { address: agwAddress, isConnected } = useAccount();
@@ -39,9 +38,6 @@ const Claim = () => {
         });
 
         if (!isMounted) return;
-
-        console.log("Checking linked accounts for:", agwAddress);
-        console.log("Found accounts:", linkedAccounts);
 
         setIsLinked(false);
         setAddress(undefined);
@@ -82,7 +78,7 @@ const Claim = () => {
     fetchingPackets,
   } = useMerkleTree();
 
-  const { writeContractSponsored, data, error, isSuccess, isPending } =
+  const { writeContractSponsored, isSuccess, isPending } =
     useWriteContractSponsored();
 
   useEffect(() => {
@@ -131,16 +127,12 @@ const Claim = () => {
       try {
         toast.success("Claiming initiated, this might take a minute");
 
-        console.log("address", address);
-        console.log("proofsAndRequests.requests", proofsAndRequests.requests);
-        console.log("proofsAndRequests.proofs", proofsAndRequests.proofs);
-
         writeContractSponsored({
           abi: ABI,
           address: deployedContractAddress,
           functionName: "claimPacket",
           args: [address, proofsAndRequests.requests, proofsAndRequests.proofs],
-          paymaster: "0x94C09162F514A86b458Ba13beC0899ffb68A19c7",
+          paymaster: PAYMASTER_ADDRESS,
           paymasterInput: getGeneralPaymasterInput({
             innerInput: "0x",
           }),

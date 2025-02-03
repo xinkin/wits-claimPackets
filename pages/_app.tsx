@@ -1,9 +1,8 @@
 import type { AppProps } from "next/app";
 import "../styles/globals.css";
-import { abstractTestnet, abstract } from "viem/chains";
+import { abstract } from "viem/chains";
 import { createPublicClient, http } from "viem";
 import { AbstractWalletProvider } from "@abstract-foundation/agw-react";
-import { abstractTestnetRPC } from "../utils/constant";
 
 export const publicClient = createPublicClient({
   chain: abstract,
@@ -12,7 +11,7 @@ export const publicClient = createPublicClient({
 
 const config = {
   chain: abstract,
-  transport: http(abstractTestnetRPC),
+  transport: http(abstract.rpcUrls.default.http[0]),
 };
 
 function MyApp({ Component, pageProps }: AppProps) {

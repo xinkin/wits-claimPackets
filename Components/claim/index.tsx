@@ -9,9 +9,8 @@ import Button from "../ui/Button";
 import Card from "../ui/Card";
 import Screen from "./Screen";
 import { useAbstractClient } from "@abstract-foundation/agw-react";
-import { Address, encodeFunctionData } from "viem";
+import { Address } from "viem";
 import RequiredInfoModal from "../../Components/ui/PopupModal";
-import { useWaitForTransactionReceipt } from "wagmi";
 import { useWriteContractSponsored } from "@abstract-foundation/agw-react";
 import { getGeneralPaymasterInput } from "viem/zksync";
 import { usePersistentState } from "../../hooks/usePersistantState";
@@ -20,7 +19,6 @@ import { PAYMASTER_ADDRESS } from "../../utils/constant";
 const Claim = () => {
   const { address: agwAddress, isConnected } = useAccount();
   const [address, setAddress] = usePersistentState("address", undefined);
-  const [hash, setHash] = useState<string | undefined>(undefined);
   const [isLinked, setIsLinked] = useState(false);
   const [modalOpen, setModalOpen] = useState(false);
   const [isClient, setIsClient] = useState(false);
@@ -83,10 +81,6 @@ const Claim = () => {
   const { writeContractSponsored, isSuccess, isPending } =
     useWriteContractSponsored();
 
-  // const { isSuccess, isPending } = useWaitForTransactionReceipt({
-  //   hash: hash as `0x${string}`,
-  // });
-
   useEffect(() => {
     if (address) {
       getUserPackets(address);
@@ -137,22 +131,6 @@ const Claim = () => {
         console.log("proofs", proofsAndRequests.proofs);
         console.log("address", address);
 
-        // if (!agwClient) return;
-
-        // const encodedWriteData = encodeFunctionData({
-        //   abi: ABI,
-        //   functionName: "claimPacket",
-        //   args: [address, proofsAndRequests.requests, proofsAndRequests.proofs],
-        // });
-
-        // const hash = await agwClient.sendTransaction({
-        //   to: deployedContractAddress,
-        //   data: encodedWriteData,
-        // });
-
-        // setHash(hash);
-        // console.log("hash", hash);
-
         writeContractSponsored({
           abi: ABI,
           address: deployedContractAddress,
@@ -197,8 +175,8 @@ const Claim = () => {
               <div className="w-1/2 flex justify-center">
                 <Button
                   onClick={handleClaim}
-                  text={hash && isPending ? "claiming..." : "claim"}
-                  disabled={Boolean(hash && isPending)}
+                  text={isPending ? "claiming..." : "claim"}
+                  disabled={Boolean(isPending)}
                 />
               </div>
             </div>

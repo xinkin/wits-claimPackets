@@ -197,8 +197,8 @@ const Claim = () => {
               <div className="w-1/2 flex justify-center">
                 <Button
                   onClick={handleClaim}
-                  text={isPending ? "claiming..." : "claim"}
-                  disabled={isPending}
+                  text={hash && isPending ? "claiming..." : "claim"}
+                  disabled={Boolean(hash && isPending)}
                 />
               </div>
             </div>

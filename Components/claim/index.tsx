@@ -80,12 +80,12 @@ const Claim = () => {
     fetchingPackets,
   } = useMerkleTree();
 
-  // const { writeContractSponsored, isSuccess, isPending } =
-  //   useWriteContractSponsored();
+  const { writeContractSponsored, isSuccess, isPending } =
+    useWriteContractSponsored();
 
-  const { isSuccess, isPending } = useWaitForTransactionReceipt({
-    hash: hash as `0x${string}`,
-  });
+  // const { isSuccess, isPending } = useWaitForTransactionReceipt({
+  //   hash: hash as `0x${string}`,
+  // });
 
   useEffect(() => {
     if (address) {
@@ -137,32 +137,32 @@ const Claim = () => {
         console.log("proofs", proofsAndRequests.proofs);
         console.log("address", address);
 
-        if (!agwClient) return;
+        // if (!agwClient) return;
 
-        const encodedWriteData = encodeFunctionData({
-          abi: ABI,
-          functionName: "claimPacket",
-          args: [address, proofsAndRequests.requests, proofsAndRequests.proofs],
-        });
-
-        const hash = await agwClient.sendTransaction({
-          to: deployedContractAddress,
-          data: encodedWriteData,
-        });
-
-        setHash(hash);
-        console.log("hash", hash);
-
-        // writeContractSponsored({
+        // const encodedWriteData = encodeFunctionData({
         //   abi: ABI,
-        //   address: deployedContractAddress,
         //   functionName: "claimPacket",
         //   args: [address, proofsAndRequests.requests, proofsAndRequests.proofs],
-        //   paymaster: PAYMASTER_ADDRESS,
-        //   paymasterInput: getGeneralPaymasterInput({
-        //     innerInput: "0x",
-        //   }),
         // });
+
+        // const hash = await agwClient.sendTransaction({
+        //   to: deployedContractAddress,
+        //   data: encodedWriteData,
+        // });
+
+        // setHash(hash);
+        // console.log("hash", hash);
+
+        writeContractSponsored({
+          abi: ABI,
+          address: deployedContractAddress,
+          functionName: "claimPacket",
+          args: [address, proofsAndRequests.requests, proofsAndRequests.proofs],
+          paymaster: PAYMASTER_ADDRESS,
+          paymasterInput: getGeneralPaymasterInput({
+            innerInput: "0x",
+          }),
+        });
         await getUserPackets(address);
 
         toast.success("transaction initiated");
